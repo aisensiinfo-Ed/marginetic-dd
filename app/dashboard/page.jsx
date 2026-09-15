@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const [configError, setConfigError] = useState(null);
   const [scans, setScans] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formState, setFormState] = useState({ repoUrl: "", targetName: "", githubToken: "" });
+  const [formState, setFormState] = useState({ repoUrl: "", targetName: "", githubToken: "", tier: "small" });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const router = useRouter();
@@ -79,6 +79,7 @@ export default function DashboardPage() {
           repo_url: formState.repoUrl,
           target_name: formState.targetName,
           github_token: formState.githubToken,
+          tier: formState.tier,
         }),
       });
 
@@ -99,7 +100,7 @@ export default function DashboardPage() {
         ...prev,
       ]);
       setShowForm(false);
-      setFormState({ repoUrl: "", targetName: "", githubToken: "" });
+      setFormState({ repoUrl: "", targetName: "", githubToken: "", tier: "small" });
     } catch (err) {
       setSubmitError(err.message);
     } finally {
@@ -178,6 +179,16 @@ export default function DashboardPage() {
                 onChange={(e) => setFormState({ ...formState, githubToken: e.target.value })}
                 required
               />
+              <label style={styles.label}>Repository size</label>
+              <select
+                style={styles.input}
+                value={formState.tier}
+                onChange={(e) => setFormState({ ...formState, tier: e.target.value })}
+              >
+                <option value="small">Small \u2014 typical repos, up to ~tens of thousands of lines</option>
+                <option value="medium">Medium \u2014 larger codebases, more memory and time allotted</option>
+                <option value="large">Large \u2014 genuinely large monorepos</option>
+              </select>
               {submitError && <p style={styles.formError}>{submitError}</p>}
               <button type="submit" style={styles.submitBtn} disabled={submitting}>
                 {submitting ? "Starting scan..." : "Start scan"}
